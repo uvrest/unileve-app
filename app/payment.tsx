@@ -1,10 +1,25 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, ScrollView, Button, StyleSheet } from 'react-native';
+import { useForm, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as Yup from 'yup';
 import FormPersonalInfo from '@/components/forms/FormPersonalInfo';
 import FormAddress from '@/components/forms/FormAdress';
 import FormCreditCard from '@/components/forms/FormCreditCard';
 
+const schema = Yup.object().shape({
+    username: Yup.string().required('O nome de usuário é obrigatório'),
+    email: Yup.string().email('Email inválido').required('O email é obrigatório'),
+});
+
 export default function PaymentPage() {
+
+    const [isSending, setIsSending] = useState(false);
+
+    const { control, handleSubmit, formState: { errors } } = useForm({
+        resolver: yupResolver(schema),
+        mode: 'onBlur',
+    });
 
     const handleConfirmarPagamento = () => {
         // Aqui você pode adicionar a lógica para processar o pagamento

@@ -1,10 +1,12 @@
 import { Stack } from "expo-router";
-import { ThemeProvider, useTheme } from "@/theme/ThemeContext";
+import { useColorScheme } from "react-native";
+import { PaperProvider, MD3LightTheme, MD3DarkTheme } from "react-native-paper";
+import { Colors } from "@/constants/Colors";
 
 const StackScreens = () => {
-  const { colors } = useTheme();
-  const headerStyle = { backgroundColor: colors.background };
-  const headerTintColor = colors.text;
+  
+  const headerStyle = { backgroundColor: '#31ceca' };
+  const headerTintColor = '#11181C';
 
   return (
     <Stack>
@@ -49,9 +51,17 @@ const StackScreens = () => {
 };
 
 export default function RootLayout() {
+
+  const colorScheme = useColorScheme();
+  const paperTheme = 
+    colorScheme === 'dark'
+    ? { ...MD3DarkTheme, colors: Colors.dark}
+    : { ...MD3LightTheme, colors: Colors.light}
+
+
   return (
-    <ThemeProvider>
-      <StackScreens />
-    </ThemeProvider>
+    <PaperProvider theme={paperTheme}>
+        <StackScreens />
+    </PaperProvider>
   );
 }

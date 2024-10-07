@@ -1,26 +1,29 @@
-import { Pressable, Text, View, Image, StyleSheet } from "react-native";
+import { Pressable, View, Image, StyleSheet } from "react-native";
 import { Link } from "expo-router";
+import { Avatar, Button, Card, Text } from 'react-native-paper';
 
 export default function Index() {
 
   return (
     <View style={styles.container}>
+
       <Image source={require('@/assets/images/unileve-logo-light.png')} style={styles.logo} />
-      <Text style={styles.title}>Bem-vindo à Unileve</Text>
-      <Text style={styles.description}>
-        Estamos felizes em vê-lo aqui. Este aplicativo vai facilitar a interação com nossas máquinas via QR Code.
-      </Text>
-      <Text style={styles.description}>
-        Para começar, basta seguir as instruções e escanear o código na máquina desejada.
-      </Text>
-      <Text style={styles.instruction}>
-        Pressione o botão abaixo para scanear o QRCode de uma máquina Unileve
-      </Text>
-      <Link href={'/qrscanner'} asChild>
-        <Pressable style={styles.button}>
-          <Text style={styles.buttonText}>Abrir Scanner QR</Text>
-        </Pressable>
-      </Link>
+
+      <Card style={{ width: '100%' }}>
+        {/*<Card.Cover source={{ uri: 'https://picsum.photos/700' }} />*/}
+        <Card.Title title="Bem-vindo à Unileve" subtitle="Estamos felizes em vê-lo aqui" />
+        <Card.Content>
+          <Text variant="titleLarge">Para começar, clique no botão abaixo para escanear o código na máquina desejada.</Text>
+          <Text variant="bodyMedium">* Nosso app está em fase alpha</Text>
+        </Card.Content>
+        <Card.Actions>
+          <Link href={'/qrscanner'} asChild>
+            <Button icon="camera" mode="contained">
+              Abrir Scanner QR
+            </Button>
+          </Link>
+        </Card.Actions>
+      </Card>
     </View>
   );
 }

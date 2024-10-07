@@ -4,6 +4,7 @@ import { StyleSheet, Text, TouchableOpacity, View, Vibration } from 'react-nativ
 import { Link } from 'expo-router';
 
 export default function QRScanner() {
+
     const [facing, setFacing] = useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
 
@@ -21,9 +22,9 @@ export default function QRScanner() {
         // Camera permissions are not granted yet.
         return (
             <View style={styles.container}>
-                <Text style={styles.message}>We need your permission to show the camera.</Text>
+                <Text style={styles.message}>A Unileve precisa de acesso à câmera do seu celular.</Text>
                 <TouchableOpacity style={styles.button} onPress={requestPermission}>
-                    <Text style={styles.buttonText}>Grant Permission</Text>
+                    <Text style={styles.buttonText}>Conceder Permissão de Acesso</Text>
                 </TouchableOpacity>
             </View>
         );
