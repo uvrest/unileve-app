@@ -1,37 +1,57 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { Stack } from "expo-router";
+import { ThemeProvider, useTheme } from "@/theme/ThemeContext";
 
-import { useColorScheme } from '@/hooks/useColorScheme';
-
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
-
-export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
+const StackScreens = () => {
+  const { colors } = useTheme();
+  const headerStyle = { backgroundColor: colors.background };
+  const headerTintColor = colors.text;
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
+    <Stack>
+      <Stack.Screen
+        name="index"
+        options={{
+          headerTitle: 'Home',
+          headerShown: true,
+          headerStyle: headerStyle,
+          headerTintColor: headerTintColor,
+        }}
+      />
+      <Stack.Screen
+        name="qrscanner"
+        options={{
+          headerTitle: 'Scaneie uma máquina Unileve',
+          headerShown: true,
+          headerStyle: headerStyle,
+          headerTintColor: headerTintColor,
+        }}
+      />
+      <Stack.Screen
+        name="payment"
+        options={{
+          headerTitle: 'Informações de pagamento',
+          headerShown: true,
+          headerStyle: headerStyle,
+          headerTintColor: headerTintColor,
+        }}
+      />
+      <Stack.Screen
+        name="checkout"
+        options={{
+          headerTitle: 'Checkout do pedido',
+          headerShown: true,
+          headerStyle: headerStyle,
+          headerTintColor: headerTintColor,
+        }}
+      />
+    </Stack>
+  );
+};
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <StackScreens />
     </ThemeProvider>
   );
 }
