@@ -7,6 +7,8 @@ import { TextInput, Button, HelperText } from 'react-native-paper';
 import PersonalInfoForm from '../components/forms/PersonalInfoForm';
 import AddressInfoForm from '../components/forms/AddressInfoForm';
 import CreditCardInfoForm from '../components/forms/CreditCardInfoForm';
+import PaymentInfo from '../components/forms/PaymentInfo';
+import ServiceSelection from '../components/forms/ServiceSelection';
 
 const schema = Yup.object().shape({
     name: Yup.string().required('Digite o nome que consta em seu cartão'),
@@ -27,6 +29,7 @@ const schema = Yup.object().shape({
 
 export default function PaymentPage() {
 
+    const [selectedService, setSelectedService] = useState(null); // Estado para o serviço selecionado
     const [isSending, setIsSending] = useState(false);
 
     const { control, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -36,13 +39,35 @@ export default function PaymentPage() {
 
     // Função chamada ao enviar o formulário
     const handleConfirmPayment = (data) => {
-        console.log(data); // Exibe os dados capturados no console
+        if (!selectedService) {
+            alert('Selecione um serviço para continuar.');
+            return;
+        }
+        console.log({ ...data, selectedService });
         alert('Pagamento confirmado!');
     };
+
+    const machineInfo = {
+        machineName: 'Brastemp ABC 30kg',
+    };
+
+    const services = [
+        { id: '1', name: 'Limpeza Leve', duration: '30 min', price: '12,90' },
+        { id: '2', name: 'Limpeza Padrão', duration: '60 min', price: '17,90' },
+        { id: '3', name: 'Limpeza Pesada', duration: '90 min', price: '25,90' },
+    ];
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
             <View style={{ paddingVertical: 15, paddingHorizontal: 15, display: 'flex' }}>
+
+                <PaymentInfo />
+
+                <ServiceSelection
+                    machineInfo={machineInfo}
+                    services={services}
+                    onSelectService={setSelectedService}
+                />
 
                 {/* Seção de Informações Pessoais */}
                 <PersonalInfoForm control={control} errors={errors} />
@@ -55,7 +80,7 @@ export default function PaymentPage() {
 
                 {/* Botão Confirmar Pagamento */}
                 <Button
-                    icon="camera"
+                    icon="credit-card-check"
                     mode="contained"
                     onPress={handleSubmit(handleConfirmPayment)}
                     loading={isSending}
