@@ -82,6 +82,7 @@ const AddressInfoForm = ({ control, setValue, errors }) => {
                                     onBlur={onBlur}
                                     onChangeText={onChange}
                                     value={value}
+                                    editable={false}
                                     error={!!errors.street}
                                 />
                                 {errors.street && <HelperText type="error">{errors.street.message}</HelperText>}
@@ -89,44 +90,52 @@ const AddressInfoForm = ({ control, setValue, errors }) => {
                         )}
                     />
 
-                    {/* Campo Número */}
-                    <Controller
-                        control={control}
-                        name="number"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <>
-                                <TextInput
-                                    mode='outlined'
-                                    label="Número"
-                                    keyboardType="numeric"
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}
-                                    error={!!errors.number}
-                                />
-                                {errors.number && <HelperText type="error">{errors.number.message}</HelperText>}
-                            </>
-                        )}
-                    />
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', columnGap:10 }}>
+                        
+                        <View style={{ flex: 1 }}>
+                            {/* Campo Número */}
+                            <Controller
+                                control={control}
+                                name="number"
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <>
+                                        <TextInput
+                                            mode='outlined'
+                                            label="Número"
+                                            keyboardType="numeric"
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            error={!!errors.number}
+                                        />
+                                        {errors.number && <HelperText type="error">{errors.number.message}</HelperText>}
+                                    </>
+                                )}
+                            />
+                        </View>
+                        
+                        <View style={{ flex: 2 }}>
+                        {/* Campo Complemento */}
+                        <Controller
+                            control={control}
+                            name="complement"
+                            render={({ field: { onChange, onBlur, value } }) => (
+                                <>
+                                    <TextInput
+                                        mode='outlined'
+                                        label="Complemento"
+                                        onBlur={onBlur}
+                                        onChangeText={onChange}
+                                        value={value}
+                                        error={!!errors.complement}
+                                    />
+                                    {errors.complement && <HelperText type="error">{errors.complement.message}</HelperText>}
+                                </>
+                            )}
+                        />
+                        </View>
 
-                    {/* Campo Complemento */}
-                    <Controller
-                        control={control}
-                        name="complement"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <>
-                                <TextInput
-                                    mode='outlined'
-                                    label="Complemento"
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}
-                                    error={!!errors.complement}
-                                />
-                                {errors.complement && <HelperText type="error">{errors.complement.message}</HelperText>}
-                            </>
-                        )}
-                    />
+                    </View>
 
                     {/* Campo Localidade/Bairro */}
                     <Controller
@@ -147,43 +156,53 @@ const AddressInfoForm = ({ control, setValue, errors }) => {
                         )}
                     />
 
-                    {/* Campo Cidade */}
-                    <Controller
-                        control={control}
-                        name="city"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <>
-                                <TextInput
-                                    mode='outlined'
-                                    label="Cidade"
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}
-                                    error={!!errors.city}
-                                />
-                                {errors.city && <HelperText type="error">{errors.city.message}</HelperText>}
-                            </>
-                        )}
-                    />
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', columnGap:10 }}>
 
-                    {/* Campo UF */}
-                    <Controller
-                        control={control}
-                        name="region_code"
-                        render={({ field: { onChange, onBlur, value } }) => (
-                            <>
-                                <TextInput
-                                    mode='outlined'
-                                    label="UF"
-                                    onBlur={onBlur}
-                                    onChangeText={onChange}
-                                    value={value}
-                                    error={!!errors.region_code}
-                                />
-                                {errors.region_code && <HelperText type="error">{errors.region_code.message}</HelperText>}
-                            </>
-                        )}
-                    />
+                        <View style={{ flex: 3 }}>
+                            {/* Campo Cidade */}
+                            <Controller
+                                control={control}
+                                name="city"
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <>
+                                        <TextInput
+                                            mode='outlined'
+                                            label="Cidade"
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            editable={false}
+                                            error={!!errors.city}
+                                        />
+                                        {errors.city && <HelperText type="error">{errors.city.message}</HelperText>}
+                                    </>
+                                )}
+                            />
+                        </View>
+
+                        <View style={{ flex: 1 }}>
+                            {/* Campo UF */}
+                            <Controller
+                                control={control}
+                                name="region_code"
+                                render={({ field: { onChange, onBlur, value } }) => (
+                                    <>
+                                        <TextInput
+                                            mode='outlined'
+                                            label="UF"
+                                            onBlur={onBlur}
+                                            onChangeText={onChange}
+                                            value={value}
+                                            editable={false}
+                                            error={!!errors.region_code}
+                                        />
+                                        {errors.region_code && <HelperText type="error">{errors.region_code.message}</HelperText>}
+                                    </>
+                                )}
+                            />
+                        </View>
+
+                    </View>
                 </>
             )}
         </Surface>
