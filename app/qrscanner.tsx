@@ -1,17 +1,46 @@
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import React, { useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View, Vibration } from 'react-native';
+import { useMachineContext } from '@/components/contexts/MachineContext';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, TouchableOpacity, View, Vibration, Alert } from 'react-native';
 import { Link } from 'expo-router';
+import { useRouter } from 'expo-router';
 
 export default function QRScanner() {
 
+    const { fetchMachineData, machine, isLoading, error } = useMachineContext();
+    const router = useRouter();
     const [facing, setFacing] = useState<CameraType>('back');
     const [permission, requestPermission] = useCameraPermissions();
+    const [hasScanned, setHasScanned] = useState(false);  // Estado para controlar se já foi escaneado
 
     const handleBarCodeScanned = ({ type, data }) => {
-        Vibration.vibrate();
-        alert(`QR code with type ${type} and data ${data} has been scanned!`);
+        if (!hasScanned) {
+            Vibration.vibrate();
+            setHasScanned(true);
+            fetchMachineData(data);
+        }
     };
+
+    useEffect(() => {
+        if (machine) {
+            // Exibe um alerta de confirmação para o usuário
+            Alert.alert(
+                'Máquina Escaneada',
+                'Deseja prosseguir para o pagamento?',
+                [
+                    {
+                        text: 'Cancelar',
+                        onPress: () => setHasScanned(false),
+                        style: 'cancel',
+                    },
+                    {
+                        text: 'OK',
+                        onPress: () => router.push('/payment'),  // Redireciona para a rota /payment
+                    },
+                ]
+            );
+        }
+    }, [machine]);
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -43,15 +72,7 @@ export default function QRScanner() {
                 barcodeScannerSettings={{
                     barcodeTypes: ["qr"],
                 }}
-            >
-                <View style={styles.buttonContainer}>
-                    <Link href={'/payment'} asChild>
-                        <TouchableOpacity style={styles.button}>
-                            <Text style={styles.text}>Simular pagamento</Text>
-                        </TouchableOpacity>
-                    </Link>
-                </View>
-            </CameraView>
+            />
         </View>
     );
 }

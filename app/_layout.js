@@ -2,6 +2,7 @@ import { Stack } from "expo-router";
 import { useColorScheme } from "react-native";
 import { PaperProvider, MD3LightTheme, MD3DarkTheme } from "react-native-paper";
 import { Colors } from "@/constants/Colors";
+import { MachineProvider } from '../components/contexts/MachineContext';
 
 // Tema claro personalizado
 const customLightTheme = {
@@ -78,7 +79,9 @@ export default function RootLayout() {
 
   return (
     <PaperProvider theme={theme}>
-        <StackScreens />
+        <MachineProvider>
+          <StackScreens />
+        </MachineProvider>
     </PaperProvider>
   );
 }
