@@ -1,33 +1,33 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Surface, RadioButton, List } from 'react-native-paper';
+import { Controller } from 'react-hook-form';
 
-const ServiceSelection = ({ machineInfo, services, onSelectService }) => {
-    
-    const [selectedService, setSelectedService] = useState(null);
-
-    const handleSelectService = (value) => {
-        setSelectedService(value);
-        onSelectService(value);
-    };
+const ServiceSelection = ({ machine, control, name }) => {
 
     return (
         <Surface style={styles.container}>
             
-            <Text style={styles.title}>Máquina: {machineInfo.machineName}</Text>
+            <Text style={styles.title}>Máquina: { machine.machine.name }</Text>
             <Text style={styles.subtitle}>Selecione o serviço desejado:</Text>
 
-            <RadioButton.Group onValueChange={handleSelectService} value={selectedService}>
-                {services.map((service, index) => (
-                    <View key={index} style={styles.radioRow}>
-                        <RadioButton value={service} />
-                        <List.Item
-                            title={service.name}
-                            description={`aprox. ${service.duration} - R$ ${service.price}`}
-                        />
-                    </View>
-                ))}
-            </RadioButton.Group>
+            <Controller
+                control={control}
+                name={name}
+                render={({ field: { onChange, value } }) => (
+                    <RadioButton.Group onValueChange={onChange} value={value}>
+                        {machine.functions.map((service, index) => (
+                            <View key={index} style={styles.radioRow}>
+                                <RadioButton value={service.machine_function.id.toString()} />
+                                <List.Item
+                                    title={service.machine_function.title}
+                                    description={`aprox. ${service.machine_function.description} - R$ ${service.custom_price}`}
+                                />
+                            </View>
+                        ))}
+                    </RadioButton.Group>
+                )}
+            />
         </Surface>
     );
 };

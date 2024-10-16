@@ -15,15 +15,15 @@ export default function QRScanner() {
 
     const handleBarCodeScanned = ({ type, data }) => {
         if (!hasScanned) {
-            Vibration.vibrate();
             setHasScanned(true);
+            Vibration.vibrate();
             fetchMachineData(data);
         }
     };
 
     useEffect(() => {
         if (machine) {
-            // Exibe um alerta de confirmação para o usuário
+            setHasScanned(true);
             Alert.alert(
                 'Máquina Escaneada',
                 'Deseja prosseguir para o pagamento?',

@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { useForm, Controller } from 'react-hook-form';
+import { View, ScrollView, Alert } from 'react-native';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
+import { useMachineContext } from '@/components/contexts/MachineContext';
 import * as Yup from 'yup';
-import { TextInput, Button, HelperText } from 'react-native-paper';
+import { Button } from 'react-native-paper';
 import PersonalInfoForm from '../components/forms/PersonalInfoForm';
 import AddressInfoForm from '../components/forms/AddressInfoForm';
 import CreditCardInfoForm from '../components/forms/CreditCardInfoForm';
@@ -27,35 +28,41 @@ const schema = Yup.object().shape({
     security_code: Yup.string().matches(/^\d{3}$/, 'O código de segurança deve ter 3 dígitos').required('Digite o código de segurança de três dígitos do cartão'),
 });
 
+
+const defaultValues = {
+    name: 'Gabriel L S Coelho',
+    email: 'mailtogabrielcoelho@gmail.com',
+    tax_id: '027.567.160-73',
+    phone: '(51) 99442-6690',
+    postal_code: '91450510',
+    street: '',
+    number: '',
+    complement: '',
+    locality: '',
+    city: '',
+    region_code: '',
+    card_number: '2202 5932 4585 6689',
+    expiration_date: '08/30',
+    security_code: '823',
+    selected_service: '',
+}
+
 export default function PaymentPage() {
 
-    const [selectedService, setSelectedService] = useState(null); // Estado para o serviço selecionado
+    const { machine } = useMachineContext();
     const [isSending, setIsSending] = useState(false);
 
     const { control, handleSubmit, setValue, formState: { errors } } = useForm({
         resolver: yupResolver(schema),
         mode: 'onBlur',
+        defaultValues: defaultValues,
     });
 
     // Função chamada ao enviar o formulário
     const handleConfirmPayment = (data) => {
-        if (!selectedService) {
-            alert('Selecione um serviço para continuar.');
-            return;
-        }
-        console.log({ ...data, selectedService });
-        alert('Pagamento confirmado!');
+        console.log(data);
+        return;
     };
-
-    const machineInfo = {
-        machineName: 'Brastemp ABC 30kg',
-    };
-
-    const services = [
-        { id: '1', name: 'Limpeza Leve', duration: '30 min', price: '12,90' },
-        { id: '2', name: 'Limpeza Padrão', duration: '60 min', price: '17,90' },
-        { id: '3', name: 'Limpeza Pesada', duration: '90 min', price: '25,90' },
-    ];
 
     return (
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
@@ -64,9 +71,9 @@ export default function PaymentPage() {
                 <PaymentInfo />
 
                 <ServiceSelection
-                    machineInfo={machineInfo}
-                    services={services}
-                    onSelectService={setSelectedService}
+                    machine={machine}
+                    control={control}
+                    name='selected_service'
                 />
 
                 {/* Seção de Informações Pessoais */}
