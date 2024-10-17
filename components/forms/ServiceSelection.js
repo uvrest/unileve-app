@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text, Surface, RadioButton, List } from 'react-native-paper';
 import { Controller } from 'react-hook-form';
 
-const ServiceSelection = ({ machine, control, name }) => {
+const ServiceSelection = ({ machine, control, setSelectedFunction, name }) => {
 
     return (
         <Surface style={styles.container}>
@@ -15,7 +15,17 @@ const ServiceSelection = ({ machine, control, name }) => {
                 control={control}
                 name={name}
                 render={({ field: { onChange, value } }) => (
-                    <RadioButton.Group onValueChange={onChange} value={value}>
+                    <RadioButton.Group 
+                        onValueChange={(selectedServiceId) => {
+                            const selectedService = machine.functions.find(
+                                (service) => service.machine_function.id.toString() === selectedServiceId
+                            );
+                            console.log(selectedService);
+                            onChange(selectedServiceId); // Atualiza o RadioButton com o ID
+                            setSelectedFunction(selectedService); // Atualiza o estado no componente principal com o objeto completo
+                        }}
+                        value={value}
+                    >
                         {machine.functions.map((service, index) => (
                             <View key={index} style={styles.radioRow}>
                                 <RadioButton value={service.machine_function.id.toString()} />

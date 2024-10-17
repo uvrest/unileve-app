@@ -10,6 +10,8 @@ import AddressInfoForm from '../components/forms/AddressInfoForm';
 import CreditCardInfoForm from '../components/forms/CreditCardInfoForm';
 import PaymentInfo from '../components/forms/PaymentInfo';
 import ServiceSelection from '../components/forms/ServiceSelection';
+import uuid from 'react-native-uuid';
+import axios from 'axios';
 
 const schema = Yup.object().shape({
     name: Yup.string().required('Digite o nome que consta em seu cartão'),
@@ -28,28 +30,28 @@ const schema = Yup.object().shape({
     security_code: Yup.string().matches(/^\d{3}$/, 'O código de segurança deve ter 3 dígitos').required('Digite o código de segurança de três dígitos do cartão'),
 });
 
-
 const defaultValues = {
-    name: 'Gabriel L S Coelho',
-    email: 'mailtogabrielcoelho@gmail.com',
-    tax_id: '027.567.160-73',
-    phone: '(51) 99442-6690',
-    postal_code: '91450510',
+    name: '',
+    email: '',
+    tax_id: '',
+    phone: '',
+    postal_code: '',
     street: '',
     number: '',
     complement: '',
     locality: '',
     city: '',
     region_code: '',
-    card_number: '2202 5932 4585 6689',
-    expiration_date: '08/30',
-    security_code: '823',
+    card_number: '',
+    expiration_date: '',
+    security_code: '',
     selected_service: '',
 }
 
 export default function PaymentPage() {
 
     const { machine } = useMachineContext();
+    const [selectedFunction, setSelectedFunction] = useState(null);
     const [isSending, setIsSending] = useState(false);
 
     const { control, handleSubmit, setValue, formState: { errors } } = useForm({
@@ -59,8 +61,107 @@ export default function PaymentPage() {
     });
 
     // Função chamada ao enviar o formulário
-    const handleConfirmPayment = (data) => {
-        console.log(data);
+    const handleConfirmPayment = async (data) => {
+
+        setIsSending(true);
+
+        const { name, email, tax_id, phone, street, number, complement, locality, city, region_code, postal_code } = data;
+        const { machine_function, custom_price } = selectedFunction;
+
+        // Gerar um ID único para referência
+        const referenceId = uuid.v4();
+
+        // Extrair área e número de telefone (remover parênteses, espaços e traços)
+        const [areaCode, phoneNumber] = phone.replace(/\D/g, '').match(/(\d{2})(\d{8,9})/).slice(1);
+
+        // Converter o preço para centavos
+        const unitAmount = Math.round(parseFloat(custom_price) * 100);
+
+        const paymentData = {
+            reference_id: referenceId,
+            customer: {
+                name,
+                email,
+                tax_id: tax_id.replace(/\D/g, ''), // CPF (somente números)
+                phones: [
+                    {
+                        country: 55,
+                        area: parseInt(areaCode),
+                        number: parseInt(phoneNumber),
+                        type: 'MOBILE',
+                    },
+                ],
+            },
+            items: [
+                {
+                    reference_id: `machine_${selectedFunction.franchise_machine_id}`,
+                    name: `${machine_function.title} ${machine_function.description}`,
+                    quantity: 1,
+                    unit_amount: unitAmount,
+                },
+            ],
+            shipping: {
+                address: {
+                    street,
+                    number,
+                    complement,
+                    locality,
+                    city,
+                    region_code,
+                    country: 'BRA',
+                    postal_code,
+                },
+            },
+            charges: [
+                {
+                    reference_id: referenceId,
+                    description: `Unileve Lavanderia: ${machine_function.title}`,
+                    amount: {
+                        value: unitAmount,
+                        currency: 'BRL',
+                    },
+                    payment_method: {
+                        type: 'CREDIT_CARD',
+                        installments: 1,
+                        capture: true,
+                        card: {
+                            encrypted: '1VDV6tt8qSERi1WgBgPAd262rVTVN2hhCNI3XxT3/49q7dh4H1xa/tLoGXJ0z4zBgEkNjb5N2pZpWXIx3sA7+zoopMR4lLzRe849nPzLKLdAibEkmqUOJq7l0BGdSymd8q6ymbRp0P+eIPZ9G4xcs82625cHJkTtJbdpgJ+Ib2idnX3zMXJ2KFLFTK3yUO4i+q/SVeU+WnpEfhs54tnnV5rvFkrQWT2KFGlTPJb5XjMFPl8k1lKp7/xuDNN2Ex/KMoG/eRZJH0KwmudOL5PcN+O8TzguJMpkYJ/GN/Fv/6FDwfCx7dzzKK7+NWgyiV26LMyVT+UJJd7kLtrR7Txc',
+                            store: false,
+                        },
+                        holder: {
+                            name,
+                            tax_id: tax_id.replace(/\D/g, ''),
+                        },
+                    },
+                },
+            ],
+        };
+
+        const urlApi = 'http://127.0.0.1:8000/api/payments/create-order';
+
+        try {
+            // Fazendo o POST com Axios
+            const response = await axios.post(urlApi, paymentData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/vnd.api+json',
+                },
+            });
+
+            // Exibe a resposta do servidor
+            const pagBankResponse = response.data;
+
+            if (pagBankResponse.charges[0].payment_response.message === 'SUCESSO') {
+                Alert.alert('Pagamento efetuado com sucesso, aguarde o destravamento da máquina');
+            }
+            console.log('Resposta da API:', response.data);
+
+        } catch (error) {
+            console.error('Erro ao enviar pagamento:', error.response ? error.response.data : error.message);
+        }
+
+        setIsSending(false);
+
         return;
     };
 
@@ -73,6 +174,7 @@ export default function PaymentPage() {
                 <ServiceSelection
                     machine={machine}
                     control={control}
+                    setSelectedFunction={setSelectedFunction}
                     name='selected_service'
                 />
 
