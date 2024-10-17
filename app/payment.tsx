@@ -125,7 +125,7 @@ export default function PaymentPage() {
                         installments: 1,
                         capture: true,
                         card: {
-                            encrypted: '1VDV6tt8qSERi1WgBgPAd262rVTVN2hhCNI3XxT3/49q7dh4H1xa/tLoGXJ0z4zBgEkNjb5N2pZpWXIx3sA7+zoopMR4lLzRe849nPzLKLdAibEkmqUOJq7l0BGdSymd8q6ymbRp0P+eIPZ9G4xcs82625cHJkTtJbdpgJ+Ib2idnX3zMXJ2KFLFTK3yUO4i+q/SVeU+WnpEfhs54tnnV5rvFkrQWT2KFGlTPJb5XjMFPl8k1lKp7/xuDNN2Ex/KMoG/eRZJH0KwmudOL5PcN+O8TzguJMpkYJ/GN/Fv/6FDwfCx7dzzKK7+NWgyiV26LMyVT+UJJd7kLtrR7Txc',
+                            encrypted: 'TITpBXOd+ugEt++ctvpgrmxpWCfmSxMNj9fom6DXHmy4lXB9B36CP7MWU3mZhn+TMKNG6HfGHR3r6cQXTxnUTIn8hcBPHuk5gHwFwDNltNUDuRhbXYZhjXm15+WHyIj9HqLVSw8EG3PH+RZyOsU6xL1+BUA+u6qWYs8omuUD20CXPD2Wo5u0STVOMmMayjh/6Jhve4yTn/eEl1+ZjMPvqQLKfxkpFHOQcA1uMtU+n1oksDK2YtEYGh1mHJ1u6f7WUgV+D2uUmnQcmKxKTYHXgXePXzDj+OZZHQ9OUObwnc29VrDSavD0NiwM91Kk7lwxEzK31Y2U0pj/GTxqTlMHNQ==',
                             store: false,
                         },
                         holder: {
@@ -137,7 +137,8 @@ export default function PaymentPage() {
             ],
         };
 
-        const urlApi = 'http://127.0.0.1:8000/api/payments/create-order';
+        const urlApi = 'http://10.0.2.2:8000/api/payments/create-order';
+        const bearerToken = '51c90193-491e-4d1c-bc3d-e7e9aa4a72027acfc15f43aa80ad09de809d817f3c03962b-3f0f-4578-8374-3745218c2fdb';
 
         try {
             // Fazendo o POST com Axios
@@ -145,6 +146,7 @@ export default function PaymentPage() {
                 headers: {
                     'Content-Type': 'application/json',
                     'Accept': 'application/vnd.api+json',
+                    'Authorization': `Bearer ${bearerToken}`,
                 },
             });
 
